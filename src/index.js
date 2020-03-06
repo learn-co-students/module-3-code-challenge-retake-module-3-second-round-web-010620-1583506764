@@ -32,7 +32,7 @@ function getBeers() {
    // show each individual beer's details; GET request to /beers/:id
    // click event listener on beerLi -- beerLi has a dataset beerId so we can access the beer id we need
    function showBeer() {
-      beerUl.addEventListener("click", function() {
+      beerUl.addEventListener("click", function(event) {
          // console.log(event.target.dataset.beerId)
          let thisBeerId = event.target.dataset.beerId
          // console.log(thisBeerId)
@@ -49,6 +49,22 @@ function getBeers() {
             <textarea>${data.description}</textarea>
             <button id="edit-beer" class="btn btn-info" data-beer-id=${data.id}>Save</button>
             `
+            // PATCH request to /beers/:id
+            const editButton = document.getElementById("edit-beer")
+            editButton.addEventListener("click", function(event) {
+               // console.log(event.target.previousElementSibling.value)
+               let newDesc = event.target.previousElementSibling.value
+
+               fetch(`${BASE_URL}/${thisBeerId}`, {
+                  method: "PATCH", 
+                  headers: {
+                     "Content-Type": "application/json", 
+                     "Accept": "application/json"
+                  }, 
+                  body:  JSON.stringify({description: `${newDesc}`})
+               })
+            })
          })
       })
-   }
+   }//showBeer closing
+
