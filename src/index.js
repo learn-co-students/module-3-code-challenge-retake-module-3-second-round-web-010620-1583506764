@@ -5,6 +5,7 @@ const beerUl = document.getElementById("list-group")
 window.addEventListener('DOMContentLoaded', (event) => {
    console.log('DOM fully loaded and parsed');
    getBeers()
+   showBeer()
 });//DOMContentLoaded closing
 
 // GET request to base URL & rendering information about all the beers
@@ -19,6 +20,7 @@ function getBeers() {
       data.forEach(function(beer) {
          let beerLi = document.createElement("li")
          beerLi.className = "list-group-item"
+         beerLi.dataset.beerId = `${beer.id}`
          beerLi.innerHTML = `
          ${beer.name}
          `
@@ -27,6 +29,26 @@ function getBeers() {
       })    
    } //getBeers closing
 
-   // When I click a beer name, the application should reveal more information about that particular beer. See the example above for the additional information that should be displayed.
-
-   // Route: GET http://localhost:3000/beers/:id
+   // show each individual beer's details; GET request to /beers/:id
+   // click event listener on beerLi -- beerLi has a dataset beerId so we can access the beer id we need
+   function showBeer() {
+      beerUl.addEventListener("click", function() {
+         // console.log(event.target.dataset.beerId)
+         let thisBeerId = event.target.dataset.beerId
+         // console.log(thisBeerId)
+         fetch(`${BASE_URL}/${thisBeerId}`)
+         .then(function(response) {
+            // console.log(response)
+            return response.json()
+         })
+         .then(function(data) {
+            beerDiv.innerHTML = `
+            <h1>${data.name}</h1>
+            <img src="${data.image_url}">
+            <h3>${data.tagline}</h3>
+            <textarea>${data.description}</textarea>
+            <button id="edit-beer" class="btn btn-info" data-beer-id=${data.id}>Save</button>
+            `
+         })
+      })
+   }
